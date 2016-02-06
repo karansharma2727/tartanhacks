@@ -59,7 +59,7 @@ function ThreeSixtyPlayer() {
   // 360player configuration options
   this.config = {
 
-    playNext: false,   // stop after one sound, or play through list until end
+    playNext: true,   // stop after one sound, or play through list until end
     autoPlay: false,   // start playing the first sound right away
     allowMultiple: false,  // let many sounds play at once (false = only one sound playing at a time)
     loadRingColor: '#ccc', // how much has loaded
@@ -343,12 +343,16 @@ function ThreeSixtyPlayer() {
       // self.clearCanvas(this._360data.oCanvas);
       this._360data.didFinish = true; // so fan draws full circle
       self.fanIn(this);
-      if (pl.config.playNext) {
+      /*if (pl.config.playNext) {
         nextLink = (pl.indexByURL[this._360data.oLink.href]+1);
         if (nextLink<pl.links.length) {
           pl.handleClick({'target':pl.links[nextLink]});
         }
-      }
+      }*/
+      //pl.handleClick({'target':"../audio/tear_the_hous_up.mp3"});
+
+      $("#music-link").attr("href", "../audio/tear_the_hous_up.mp3");
+      pl.handleClick({target:self.links[0],preventDefault:function(){}});
     },
 
     whileloading: function() {

@@ -6,6 +6,7 @@
 
   <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">  
 
+  <script type="text/javascript" src="./js/libs/jquery-1.12.0.min.js"> </script>
   <link rel="stylesheet" type="text/css" href="./css/flashblock.css">
 
   <link rel="stylesheet" type="text/css" href="./css/360player.css">
@@ -16,11 +17,13 @@
   <script src="./js/libs/soundmanager2/script/soundmanager2.js"></script>
   <script type="text/javascript" src="./js/360player.js"></script>
 
-  <script type="text/javascript">
+  <script type="text/javascript"></script>
+
+  <script src="./js/libs/socket.io/socket.io.js">
 
 soundManager.setup({
   // path to directory containing SM2 SWF
-  url: './js/libs/soundmanager2/swf/'
+  url: './js/libs/soundmanager2/swf/',
 });
 
 threeSixtyPlayer.config.scaleFont = (navigator.userAgent.match(/msie/i)?false:true);
@@ -60,6 +63,10 @@ body {
 </head>
 
 <body>
+
+
+</head>
+
 
 <script src="js/bootstrap.min.js"></script>
 

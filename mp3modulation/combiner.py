@@ -3,6 +3,9 @@ import os
 import random
 
 from pydub import AudioSegment
+import os
+import random
+import json
 
 #Return the newest mix
 def latestmix():
@@ -138,3 +141,53 @@ def nextTransition(s1, s2):
         fadeOut = eb1 - b1
     
     return (starTime2, endTime1, fadeOut)
+
+def getSongs(genre):
+    path = os.getcwd() + "/music/" + "Deep House/"
+    jsons = filter(lambda x : x[-5:] == ".json", os.listdir(path))
+    
+    firstSong = random.choice(jsons)
+    firstJSON = json.load(open(path + firstSong))
+    
+    jsonMaps = map(lambda x : (x, json.load(open(path + x))), jsons)
+
+    res = [(firstSong, firstJSON["cues"])]
+    last = (firstSong, firstJSON)
+    jsonMaps.remove(last)
+
+    for i in range(1, 9):
+        # Get next sont
+        nextUp = nextSong(last[1]["bpm"], last[1]["key"], jsonMaps)
+
+        if not nextUp:
+            print "Outta songs"
+            return res
+        
+        # Remove it from the list of possible songs
+        jsonMaps.remove(nextUp)
+
+        # Add to result, and set last song
+        res += [(nextUp[0], nextUp[1]["cues"])]
+        last = nextUp
+
+    return res
+    
+def nextSong(bpm, key, jsonMaps):
+    bpmRange = [bpm - 5, bpm + 5]
+    
+    keyNum = int(key[:-1]) 
+    possibleKeyNum = [keyNum % 12 + 1, (keyNum - 2) % 12 + 1]
+    possibleKey = map(lambda x: str(x) + key[-1] ,possibleKeyNum) + [str(keyNum) + "A", str(keyNum) + "B"]
+    
+    # Jsons where bpm and key are bounded
+    boundBPM = filter(lambda (x,d) : d["bpm"] >= bpmRange[0]
+                                 and d["bpm"] <= bpmRange[1], jsonMaps)
+    boundKey = filter(lambda (x,d) : d["key"] in possibleKey, boundBPM)
+
+    if len(boundKey) == 0:
+        return None
+    
+    res = random.choice(boundKey)
+    return res
+
+getSongs("")
