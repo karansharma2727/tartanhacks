@@ -35,7 +35,7 @@ server = http.createServer(function(request, response){
     });
 });
 
-server.listen(process.env.BACKEND_PORT || 81);
+server.listen(process.env.BACKEND_PORT || 3000);
 var listener = io.listen(server);
 
 listener.on('connection', function(client){
