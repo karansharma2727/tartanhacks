@@ -1,15 +1,75 @@
+import json
+import os
+import random
+
 from pydub import AudioSegment
 import os
 import random
 import json
 
+#Return the newest mix
+def latestmix():
+    return max(glob.iglob('*.[Mm][Pp]3'), key=os.path.getctime)
+
+#Make a mix when called
 def makemix():
 
-    fullsongarr = []
-    starseg = []
+    startseg = [0]
     endseg = []
-    fadeout = [] 
+    fadeoutarr = [0] 
+  
+    #Get ten songs
+    (songs,songinfoarr) = getsongs("House")
+
+    #Make the segments for the 10 songs
+    for index in range(10):
+        (starttime, endtime, fadeout) = nextSong(songinfoarr[index], songinfoarr[index+1])
+        startseg.add(starttime)
+        endseg.add(endtime)
+        fadeoutarr.add(fadeout)
+
+    makesegments(songs, startseg, endseg, fadeoutarr)
+       
+    #Create and export the mix
+    st = str(datetime.datetime.now())
+    mix.export(st+".mp3",format="mp3")
+
+# return a tuple of (songs,songinfo)
+def getsongs(genre, numsongs):
     
+    if (genre == "House"):
+        path = "./house/"
+    else:
+        path = "./nothouse/"
+
+    songname = []
+    songs = []
+    songinfo = []
+    (songname,song,mixinfo,key,tempo) = getsong(path, None, None, songname)
+    songname.add(songname)
+    songs.add(song)
+    songinfo.add(mixinfo)
+    for index in range(numsongs-1):
+    	(songname,song,mixinfo,key,tempo) = getsong(path, key, tempo, songname)
+	songname.add(songname)
+        songs.add(song)
+        songinfo.add(mixinfo)
+
+    return (songs,songinfo)    
+
+def getsong(path, key, tempo, cursongs):
+    
+    while (True):
+    	randomsong = random.choice(os.listdir(path))
+        file = open(randomsong+".json", 'r')
+        data = json.load(f)
+        songkey = data["key"]
+        songtempo = data["tempo"]
+        songname = data["songname"]
+        if ((key == songkey) && (songtempo = tempo)):
+            if (songname in cursongs):
+              	song = AudioSegment.from_mp3(path)
+		mixinfo = data["mixinfo"]
 
 #Make full segment 
 def makesegments(fullsongarr, startseg, endseg, fadeout):

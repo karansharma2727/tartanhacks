@@ -3,6 +3,9 @@
 <html>
 <head>
   <title> TartanHacks Project </title>
+
+  <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">  
+
   <script type="text/javascript" src="./js/libs/jquery-1.12.0.min.js"> </script>
   <link rel="stylesheet" type="text/css" href="./css/flashblock.css">
 
@@ -14,7 +17,9 @@
   <script src="./js/libs/soundmanager2/script/soundmanager2.js"></script>
   <script type="text/javascript" src="./js/360player.js"></script>
 
-  <script type="text/javascript">
+  <script type="text/javascript"></script>
+
+  <script src="./js/libs/socket.io/socket.io.js">
 
 soundManager.setup({
   // path to directory containing SM2 SWF
@@ -50,17 +55,47 @@ if (threeSixtyPlayer.config.useWaveformData || threeSixtyPlayer.flash9Options.us
 threeSixtyPlayer.config.useFavIcon = false;
 
 </script>
-
-<script src="./js/libs/socket.io/socket.io.js"></script>
-
+<style>
+body {
+	background-color: 0xF5F5F5;
+}
+</style>
 </head>
 
 <body>
-Hello World!
-<div class="ui360 ui360-vis">
- <a href="./audio/u_got_2.mp3" id="music-link"></a>
-</div>
 
+
+</head>
+
+
+<script src="js/bootstrap.min.js"></script>
+
+<div class ="container">
+  <div class ="row">
+    <div class="col-sm-2">
+    </div>
+    <div class="col-sm-8">
+       <img class="row text-center" src="image/mixmix.svg" style="width:800px;height:200px;"></img>
+    </div>
+    <div class="col-sm-2">
+    </div>
+  </div>
+  <div class ="row">
+    <div class="col-sm-2">
+    </div>
+    <div class="col-sm-8">
+      <div class = "center-block">
+        <div class = "container">
+          <div class="ui360 ui360-vis">
+	    <a href="./audio/u_got_2.mp3"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-2">
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
