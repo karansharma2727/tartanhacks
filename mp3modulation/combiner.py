@@ -165,7 +165,7 @@ def nextSong(bpm, key, jsonMaps):
     return res
 
 
-csvfile = open('Deep-House-1.csv', 'r')
+csvfile = open('Funk Cues.csv', 'r')
 
 def getMilliSeconds(s):
     r1 = s.split(":")
@@ -173,16 +173,15 @@ def getMilliSeconds(s):
     msec = float(r1[1])
     return int(((60 * sec) + msec) * 1000)
 
-#reader = csv.DictReader(csvfile)
-#for row in reader:
-#    SB = getMilliSeconds(row["Start Build"])
-#    M4 = getMilliSeconds(row["4 Measures"])
-#    D = getMilliSeconds(row["Drop"])
-#    B = getMilliSeconds(row["Breakdown"])
-#    EB = getMilliSeconds(row["End Breakdown"])
+reader = csv.DictReader(csvfile)
+for row in reader:
+    SB = getMilliSeconds(row["Start Build"])
+    M4 = getMilliSeconds(row["4 Measures"])
+    D = getMilliSeconds(row["Drop"])
+    B = getMilliSeconds(row["Breakdown"])
+    EB = getMilliSeconds(row["End Breakdown"])
 
     
-#    jsonfile = open(row["Song"][:-4] + '.json', 'w')
-#    json.dump({"key" : row["Key"], "bpm" : int(row["Tempo"]),
-#               "cues" : [SB, M4, D, B, EB]}, jsonfile)
- # #  
+    jsonfile = open(row["Song"][:-4] + '.json', 'w')
+    json.dump({"key" : row["Key"], "bpm" : int(row["Tempo"]),
+               "cues" : [SB, M4, D, B, EB]}, jsonfile)  
