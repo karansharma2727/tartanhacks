@@ -24,7 +24,7 @@
 .sm2-360ui {
  /* slight inner shadow + BG color + border */
  background-image: url("../image/tycho.png");
- background-size: 256px 270px;
+ background-size: 255px 250px;
  background-color: #f9f9f9;
  background-color: rgba(0,0,0,0.025);
  box-shadow: inset 0px 0px 8px rgba(0,0,0,0.15);
