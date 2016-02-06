@@ -39,7 +39,8 @@ def combinemix(songarr, fadeoutarr):
 
     return newseg
 
-def nextSong(s1, s2):
+# Know what drop comes next, TODO: Randomize transitions
+def nextTransition(s1, s2):
     (sb1, bar1, d1, b1, eb1) = s1
     (sb2, bar2, d2, b2, eb2) = s2
 
