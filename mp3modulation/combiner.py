@@ -8,8 +8,8 @@ import random
 import json
 
 #Return the newest mix
-def latestmix():
-    return max(glob.iglob('*.[Mm][Pp]3'), key=os.path.getctime)
+#def latestmix():
+#    return max(glob.iglob('*.[Mm][Pp]3'), key=os.path.getctime)
 
 #Make a mix when called
 def makemix():
@@ -19,57 +19,22 @@ def makemix():
     fadeoutarr = [0] 
   
     #Get ten songs
-    (songs,songinfoarr) = getsongs("House")
+    songlist = getSongs("")
+    print songlist
 
     #Make the segments for the 10 songs
-    for index in range(10):
-        (starttime, endtime, fadeout) = nextSong(songinfoarr[index], songinfoarr[index+1])
-        startseg.add(starttime)
-        endseg.add(endtime)
-        fadeoutarr.add(fadeout)
+    for index in range(len(songlist)-1):
+        (starttime, endtime, fadeout) = nextTransition(songlist[index][1], songlist[index+1][1])
+        startseg.append(starttime)
+        endseg.append(endtime)
+        fadeoutarr.append(fadeout)
 
-    makesegments(songs, startseg, endseg, fadeoutarr)
-       
+    endseg.append(0)
+    makesegments(songlist, startseg, endseg, fadeoutarr)
+      
     #Create and export the mix
     st = str(datetime.datetime.now())
     mix.export(st+".mp3",format="mp3")
-
-# return a tuple of (songs,songinfo)
-def getsongs(genre, numsongs):
-    
-    if (genre == "House"):
-        path = "./house/"
-    else:
-        path = "./nothouse/"
-
-    songname = []
-    songs = []
-    songinfo = []
-    (songname,song,mixinfo,key,tempo) = getsong(path, None, None, songname)
-    songname.add(songname)
-    songs.add(song)
-    songinfo.add(mixinfo)
-    for index in range(numsongs-1):
-    	(songname,song,mixinfo,key,tempo) = getsong(path, key, tempo, songname)
-	songname.add(songname)
-        songs.add(song)
-        songinfo.add(mixinfo)
-
-    return (songs,songinfo)    
-
-def getsong(path, key, tempo, cursongs):
-    
-    while (True):
-    	randomsong = random.choice(os.listdir(path))
-        file = open(randomsong+".json", 'r')
-        data = json.load(f)
-        songkey = data["key"]
-        songtempo = data["tempo"]
-        songname = data["songname"]
-        if ((key == songkey) && (songtempo = tempo)):
-            if (songname in cursongs):
-              	song = AudioSegment.from_mp3(path)
-		mixinfo = data["mixinfo"]
 
 #Make full segment 
 def makesegments(fullsongarr, startseg, endseg, fadeout):
@@ -78,7 +43,9 @@ def makesegments(fullsongarr, startseg, endseg, fadeout):
     fadeoutarr = []
     #Makes the segment of the full songs
     for index in range(len(fullsongarr)):
-    	seg1 = makeseg(fullsongarr[index], startseg[index], endseg[index])
+        print fullsongarr[index][0]
+        song = AudioSegment.from_mp3(fullsongarr[index][0])
+    	seg1 = makeseg(song, startseg[index], endseg[index])
 	songseg.add(seg1)
         fadeoutarr(fadeout[index]-startseg[index])
 
@@ -88,6 +55,9 @@ def makesegments(fullsongarr, startseg, endseg, fadeout):
 def makeseg(fullsong, startseg, endseg):
 
     songfirstchop = fullsong[:endseg]
+    if (endseg == 0):
+        return songfirstchop
+
     songsecondchop = songfirstchop[(startseg-endseg):]
 
     return songsecondchop
@@ -104,8 +74,9 @@ def combinemix(songarr, fadeoutarr):
 
 # Know what drop comes next, TODO: Randomize transitions
 def nextTransition(s1, s2):
-    (sb1, bar1, d1, b1, eb1) = s1
-    (sb2, bar2, d2, b2, eb2) = s2
+    print s1
+    (sb1, bar1, d1, b1, eb1) = tuple(s1)
+    (sb2, bar2, d2, b2, eb2) = tuple(s2)
 
     # Get time for a single bar in song 1
     barLen1 = (d1 - bar1)
@@ -140,7 +111,7 @@ def nextTransition(s1, s2):
         endTime1 = eb1
         fadeOut = eb1 - b1
     
-    return (starTime2, endTime1, fadeOut)
+    return (startTime2, endTime1, fadeOut)
 
 def getSongs(genre):
     path = os.getcwd() + "/music/" + "Deep House/"
@@ -189,5 +160,3 @@ def nextSong(bpm, key, jsonMaps):
     
     res = random.choice(boundKey)
     return res
-
-getSongs("")
