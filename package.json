@@ -9,6 +9,7 @@
   "dependencies": {
     "connect": "^3.4.1",
     "express": "^4.13.4",
+    "fileupload": "^1.0.0",
     "serve-static": "^1.10.2",
     "socket.io": "^1.4.5",
     "soundmanager2": "^2.97.20150601"

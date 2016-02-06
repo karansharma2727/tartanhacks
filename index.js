@@ -19,6 +19,14 @@ var io = require('socket.io')(http);
 app.use('/', express.static(__dirname + '/clients'));
 app.use('/mp3modulation', express.static(__dirname + '/mp3modulation'));
 
+var fileupload = require('fileupload').createFileUpload(__dirname + '/mp3modulation/music').middleware
+
+app.post('/upload', fileupload, function(req, res) {
+  // files are now in the req.body object along with other form fields
+  // files also get moved to the uploadDir specified
+})
+
+
 var i = 0;
 var test_songs = ['Lost.mp3', 'Notorious.mp3', 'Tempest.mp3'];
 
