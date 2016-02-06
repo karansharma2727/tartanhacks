@@ -3,7 +3,9 @@ import random
 import json
 import datetime
 import csv
+import copy
 
+from subprocess import call
 from pydub import AudioSegment
 
 #Return the newest mix
@@ -34,43 +36,6 @@ def makemix():
     st = str(datetime.datetime.now())
     mix.export(st+".mp3",format="mp3")
 
-# return a tuple of (songs,songinfo)
-def getsongs(genre, numsongs):
-    
-    if (genre == "House"):
-        path = "./house/"
-    else:
-        path = "./nothouse/"
-
-    songname = []
-    songs = []
-    songinfo = []
-    (songname,song,mixinfo,key,tempo) = getsong(path, None, None, songname)
-    songname.add(songname)
-    songs.add(song)
-    songinfo.add(mixinfo)
-    for index in range(numsongs-1):
-    	(songname,song,mixinfo,key,tempo) = getsong(path, key, tempo, songname)
-	songname.add(songname)
-        songs.add(song)
-        songinfo.add(mixinfo)
-
-    return (songs,songinfo)    
-
-def getsong(path, key, tempo, cursongs):
-    
-    while (True):
-    	randomsong = random.choice(os.listdir(path))
-        file = open(randomsong+".json", 'r')
-        data = json.load(f)
-        songkey = data["key"]
-        songtempo = data["tempo"]
-        songname = data["songname"]
-        if ((key == songkey) and (songtempo == tempo)):
-            if (songname in cursongs):
-              	song = AudioSegment.from_mp3(path)
-		mixinfo = data["mixinfo"]
-
 #Make full segment 
 def makesegments(fullsongarr, startseg, endseg, fadeout):
 
@@ -87,7 +52,7 @@ def makesegments(fullsongarr, startseg, endseg, fadeout):
 
     return combinemix(songseg, fadeout)
 
-#Given a full song makes a segment from the song
+# Given a full song makes a segment from the song
 def makeseg(fullsong, startseg, endseg):
 
     if (endseg == 0):
@@ -146,7 +111,6 @@ def nextTransition(s1, s2):
         startTime2 = sb2 + extraBuildUp
         endTime1 = eb1
         fadeOut = eb1 - b1
- 
    
     return (startTime2, endTime1, fadeOut)
 
@@ -159,29 +123,52 @@ def getSongs(genre):
     
     jsonMaps = map(lambda x : (x, json.load(open(path + x))), jsons)
 
-    res = [(firstSong, firstJSON["cues"])]
+    res = [(path + firstSong[:-5] + ".mp3", firstJSON["cues"])]
     last = (firstSong, firstJSON)
     jsonMaps.remove(last)
 
-    for i in range(1, 9):
+    for i in range(1, 10):
         # Get next sont
-        nextUp = nextSong(last[1]["bpm"], last[1]["key"], jsonMaps)
+        nextUp = nextSong(firstJSON["bpm"], last[1]["key"], jsonMaps, path)
 
         if not nextUp:
             print "Outta songs"
-            return map(lambda (a,b) : (path + (a[:-5]) + ".mp3", b),res)
+            return res
         
         # Remove it from the list of possible songs
-        jsonMaps.remove(nextUp)
+        print nextUp[1]
+        jsonMaps.remove(nextUp[0])
 
         # Add to result, and set last song
-        res += [(nextUp[0], nextUp[1]["cues"])]
-        last = nextUp
+        res += [(nextUp[1][0], nextUp[1][1]["cues"])]
+        last = nextUp[1]
+    print res
+    return res
 
-    return map(lambda (a,b) : (path + (a[-5:]) + ".mp3", b),res)
+ # Change BPM, fix time stamps, write to temorary file
+def fixBPM((songName, songJSON), bpm, path):
+    # Song name with mp3
+    newName = songName[:-5] + ".mp3"
+    
+    # if songJSON["bpm"] != bpm:
+    #     # Find the factor change in bpm
+    #     factor = float(bpm) / songJSON["bpm"]
 
-def nextSong(bpm, key, jsonMaps):
-    bpmRange = [bpm - 5, bpm + 5]
+    #     # Adjust new song to that tempo
+    #     # call(["sox", path + newName, path + "temp/" + newName, "speed",  str(factor)])
+
+    #     newJSON = copy.deepcopy(songJSON)
+    #     newJSON["bpm"] = bpm
+    #     print songName
+    #     print factor
+    #     newJSON["cues"] = map(lambda x: x * factor, songJSON["cues"])
+        
+    #     return ((songName, songJSON), (path + "temp/" + newName, newJSON))
+    # else:
+    return ((songName, songJSON), (path + newName, songJSON))
+
+def nextSong(bpm, key, jsonMaps, path):
+    bpmRange = [bpm - 1, bpm + 1]
     
     keyNum = int(key[:-1]) 
     possibleKeyNum = [keyNum % 12 + 1, (keyNum - 2) % 12 + 1]
@@ -196,19 +183,20 @@ def nextSong(bpm, key, jsonMaps):
         return None
     
     res = random.choice(boundKey)
-    return res
+    return fixBPM(res, bpm, path)
 
+# csvfile = open('/Users/Jichao/tartanhacks/mp3modulation/ProgHouse.csv', 'r')
 
-csvfile = open('Deep-House-1.csv', 'r')
+# def getMilliSeconds(s):
+#     r1 = s.split(":")
+#     sec = int(r1[0])
+#     msec = float(r1[1])
+#     return int(((60 * sec) + msec) * 1000)
 
-def getMilliSeconds(s):
-    r1 = s.split(":")
-    sec = int(r1[0])
-    msec = float(r1[1])
-    return int(((60 * sec) + msec) * 1000)
+makemix()
 
-#reader = csv.DictReader(csvfile)
-#for row in reader:
+# reader = csv.DictReader(csvfile)
+# for row in reader:
 #    SB = getMilliSeconds(row["Start Build"])
 #    M4 = getMilliSeconds(row["4 Measures"])
 #    D = getMilliSeconds(row["Drop"])
@@ -216,7 +204,7 @@ def getMilliSeconds(s):
 #    EB = getMilliSeconds(row["End Breakdown"])
 
     
-#    jsonfile = open(row["Song"][:-4] + '.json', 'w')
+#    jsonfile = open(row["Song"] + '.json', 'w')
 #    json.dump({"key" : row["Key"], "bpm" : int(row["Tempo"]),
 #               "cues" : [SB, M4, D, B, EB]}, jsonfile)
- # #  
+#  #  
