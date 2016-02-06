@@ -1,6 +1,7 @@
 import json
 import os
 import random
+import csv
 
 from pydub import AudioSegment
 import os
@@ -66,7 +67,7 @@ def getsong(path, key, tempo, cursongs):
         songkey = data["key"]
         songtempo = data["tempo"]
         songname = data["songname"]
-        if ((key == songkey) && (songtempo = tempo)):
+        if ((key == songkey) and (songtempo == tempo)):
             if (songname in cursongs):
               	song = AudioSegment.from_mp3(path)
 		mixinfo = data["mixinfo"]
@@ -190,4 +191,26 @@ def nextSong(bpm, key, jsonMaps):
     res = random.choice(boundKey)
     return res
 
-print getSongs("")
+
+csvfile = open('Deep-House-1.csv', 'r')
+
+def getMilliSeconds(s):
+    r1 = s.split(":")
+    sec = int(r1[0])
+    msec = float(r1[1])
+    return int(((60 * sec) + msec) * 1000)
+
+reader = csv.DictReader(csvfile)
+for row in reader:
+    SB = getMilliSeconds(row["Start Build"])
+    M4 = getMilliSeconds(row["4 Measures"])
+    D = getMilliSeconds(row["Drop"])
+    B = getMilliSeconds(row["Breakdown"])
+    EB = getMilliSeconds(row["End Breakdown"])
+
+    
+    jsonfile = open(row["Song"][:-4] + '.json', 'w')
+    json.dump({"key" : row["Key"], "bpm" : int(row["Tempo"]),
+               "cues" : [SB, M4, D, B, EB]}, jsonfile)
+    
+
