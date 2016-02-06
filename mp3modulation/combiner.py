@@ -1,12 +1,26 @@
+import datetime
+import os
+import glob
+
 from pydub import AudioSegment
 
+#Return the newest mix
+def latestmix():
+    return max(glob.iglob('*.[Mm][Pp]3'), key=os.path.getctime)
+
+#Make a mix when called
 def makemix():
 
     fullsongarr = []
     starseg = []
     endseg = []
     fadeout = [] 
-    
+ 
+    nextSong
+       
+    #Create and export the mix
+    st = str(datetime.datetime.now())
+    mix.export(st+".mp3",format="mp3")
 
 #Make full segment 
 def makesegments(fullsongarr, startseg, endseg, fadeout):
@@ -56,7 +70,7 @@ def nextSong(s1, s2):
     # Build up time matches break down time (or breakdown is longer)
     # Just put the build during break down.
     if round(barsToEB1) <= round(barsToD2):
-        startTime = sb2
+	startTime = sb2
         endTime = None
         fadeOut = sb2 - d2
 
