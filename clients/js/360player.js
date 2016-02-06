@@ -350,6 +350,7 @@ function ThreeSixtyPlayer() {
         }
       }*/
 
+      console.log("changing href to " + window.nextMix);
       $("#music-link").attr("href", window.nextMix);
       window.socket.emit('playRequest', "Karan"); //TODO: add genre
       pl.handleClick({target:self.links[0],preventDefault:function(){}});
