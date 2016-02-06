@@ -12,7 +12,7 @@ var http  = require('http'),
 
 var connect = require('connect');
 var serveStatic = require('serve-static');
-connect().use(serveStatic(__dirname + '/static/')).listen(8080);
+connect().use(serveStatic(__dirname + '/clients/static/')).listen(8080);
 
 server = http.createServer(function(request, response){
     var uri = url.parse(request.url).pathname;
@@ -49,7 +49,7 @@ listener.on('connection', function(client){
                              }
                          });
     });
-    
+
     sh.stdout.setEncoding('utf-8');
     sh.stdout.on('data', function(data) {
         client.send(data);
