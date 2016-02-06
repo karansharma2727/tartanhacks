@@ -352,9 +352,7 @@ function ThreeSixtyPlayer() {
       //pl.handleClick({'target':"../audio/tear_the_hous_up.mp3"});
 
       $("#music-link").attr("href", "../audio/tear_the_hous_up.mp3");
-      //o.href = "../audio/tear_the_hous_up.mp3";
-      this.events.play();
-      $
+      pl.handleClick({target:self.links[0],preventDefault:function(){}});
     },
 
     whileloading: function() {
