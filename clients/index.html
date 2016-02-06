@@ -72,6 +72,24 @@ body {
 	background-color: #F5F5F5;
 }
 </style>
+
+<link rel="stylesheet" href="./css/dropzone.css">
+<script type="text/javascript" src="./js/dropzone.js"></script>
+<script>
+Dropzone.options.uploadWidget = {
+  paramName: 'file',
+  maxFiles: 1,
+  dictDefaultMessage: 'Drag an mp3 here to upload, or click to select one',
+  init: function() {
+    this.on('success', function( file, resp ){
+      console.log( file );
+      console.log( resp );
+    });
+  },
+};
+</script>
+
+
 </head>
 
 <body>
@@ -98,9 +116,18 @@ body {
     </div>
 
     <div class="col-sm-4">
-          <div class="ui360 ui360-vis">
-            <a href="./audio/u_got_2.mp3" id="music-link"></a>
+      <div class="row">
+        <div class="ui360 ui360-vis">
+           <a href="./audio/u_got_2.mp3" id="music-link"></a>
+        </div>
+      </div>
+      <div class="row">
+        <form id="upload-widget" method="post" action="/upload" class="dropzone">
+          <div class="fallback">
+            <input name="file" type="file" />
           </div>
+        </form>
+      </div>s
     </div>
 
     <div class="col-sm-4">
