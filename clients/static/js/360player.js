@@ -349,9 +349,9 @@ function ThreeSixtyPlayer() {
           pl.handleClick({'target':pl.links[nextLink]});
         }
       }*/
-      //pl.handleClick({'target':"../audio/tear_the_hous_up.mp3"});
 
-      $("#music-link").attr("href", "../audio/tear_the_hous_up.mp3");
+      $("#music-link").attr("href", window.nextMix);
+      window.socket.emit('playRequest', "Karan"); //TODO: add genre
       pl.handleClick({target:self.links[0],preventDefault:function(){}});
     },
 

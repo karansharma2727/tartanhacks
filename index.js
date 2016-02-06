@@ -35,11 +35,19 @@ server = http.createServer(function(request, response){
     });
 });
 
-server.listen(process.env.BACKEND_PORT || 3000);
+server.listen(3000);
 var listener = io.listen(server);
+var i = 0;
+var test_songs = ['Lost.mp3', 'Notorious.mp3', 'Tempest.mp3'];
 
 listener.on('connection', function(client){
     client.on('playRequest', function(genre) {
+      if(genre === "Karan") {
+        var title = test_songs[i % test_songs.length];
+        client.send('http://limitless-shore-68930.herokuapp.com/mp3modulation/music/deep_house/' + title);
+        i++;
+        return;
+      }
         var child = exec("python ~/combiner.py " + genre,
                          function(error, stdout, stderr){
                              if (error != NULL) {
