@@ -104,9 +104,9 @@ function ThreeSixtyPlayer() {
 
     fontSizeMax: null, // set according to CSS
 
-    scaleArcWidth: 1,  // thickness factor of playback progress ring
+    scaleArcWidth: .8,  // thickness factor of playback progress ring
 
-    useFavIcon: false // Experimental (also requires usePeakData: true).. Try to draw a "VU Meter" in the favicon area, if browser supports it (Firefox + Opera as of 2009)
+    useFavIcon: true  // Experimental (also requires usePeakData: true).. Try to draw a "VU Meter" in the favicon area, if browser supports it (Firefox + Opera as of 2009)
 
   };
 
@@ -352,7 +352,7 @@ function ThreeSixtyPlayer() {
 
       console.log("changing href to " + window.nextMix);
       $("#music-link").attr("href", window.nextMix);
-      window.socket.emit('playRequest', "Karan"); //TODO: add genre
+      window.socket.emit('playRequest', window.genre);
       pl.handleClick({target:self.links[0],preventDefault:function(){}});
     },
 

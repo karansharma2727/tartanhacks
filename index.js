@@ -42,13 +42,11 @@ var test_songs = ['Lost.mp3', 'Notorious.mp3', 'Tempest.mp3'];
 io.on('connection', function(socket){
   console.log('a user connected');
   socket.on('playRequest', function(genre){
-    if(genre === "Karan") {
       var title = test_songs[i % test_songs.length];
       io.emit('playRequest', './mp3modulation/music/deep_house/' + title);
       console.log("trying to send user " + title);
       i++;
       return;
-    }
       /*var child = exec("python ~/combiner.py " + genre,
                        function(error, stdout, stderr){
                            if (error != NULL) {
