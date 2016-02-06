@@ -2,6 +2,7 @@ import os
 import random
 import json
 import datetime
+import csv
 
 from pydub import AudioSegment
 
@@ -33,6 +34,43 @@ def makemix():
     st = str(datetime.datetime.now())
     mix.export(st+".mp3",format="mp3")
 
+# return a tuple of (songs,songinfo)
+def getsongs(genre, numsongs):
+    
+    if (genre == "House"):
+        path = "./house/"
+    else:
+        path = "./nothouse/"
+
+    songname = []
+    songs = []
+    songinfo = []
+    (songname,song,mixinfo,key,tempo) = getsong(path, None, None, songname)
+    songname.add(songname)
+    songs.add(song)
+    songinfo.add(mixinfo)
+    for index in range(numsongs-1):
+    	(songname,song,mixinfo,key,tempo) = getsong(path, key, tempo, songname)
+	songname.add(songname)
+        songs.add(song)
+        songinfo.add(mixinfo)
+
+    return (songs,songinfo)    
+
+def getsong(path, key, tempo, cursongs):
+    
+    while (True):
+    	randomsong = random.choice(os.listdir(path))
+        file = open(randomsong+".json", 'r')
+        data = json.load(f)
+        songkey = data["key"]
+        songtempo = data["tempo"]
+        songname = data["songname"]
+        if ((key == songkey) and (songtempo == tempo)):
+            if (songname in cursongs):
+              	song = AudioSegment.from_mp3(path)
+		mixinfo = data["mixinfo"]
+
 #Make full segment 
 def makesegments(fullsongarr, startseg, endseg, fadeout):
 
@@ -41,6 +79,7 @@ def makesegments(fullsongarr, startseg, endseg, fadeout):
     songseg = []
     fadeoutarr = []
     #Makes the segment of the full songs
+    print fullsongarr
     for index in range(len(fullsongarr)):
         song = AudioSegment.from_mp3(fullsongarr[index][0])
     	seg1 = makeseg(song, startseg[index], endseg[index])
@@ -158,3 +197,26 @@ def nextSong(bpm, key, jsonMaps):
     
     res = random.choice(boundKey)
     return res
+
+
+csvfile = open('Deep-House-1.csv', 'r')
+
+def getMilliSeconds(s):
+    r1 = s.split(":")
+    sec = int(r1[0])
+    msec = float(r1[1])
+    return int(((60 * sec) + msec) * 1000)
+
+#reader = csv.DictReader(csvfile)
+#for row in reader:
+#    SB = getMilliSeconds(row["Start Build"])
+#    M4 = getMilliSeconds(row["4 Measures"])
+#    D = getMilliSeconds(row["Drop"])
+#    B = getMilliSeconds(row["Breakdown"])
+#    EB = getMilliSeconds(row["End Breakdown"])
+
+    
+#    jsonfile = open(row["Song"][:-4] + '.json', 'w')
+#    json.dump({"key" : row["Key"], "bpm" : int(row["Tempo"]),
+#               "cues" : [SB, M4, D, B, EB]}, jsonfile)
+ # #  
