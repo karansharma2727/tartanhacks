@@ -1,6 +1,6 @@
-import datetime
+import json
 import os
-import glob
+import random
 
 from pydub import AudioSegment
 
@@ -11,16 +11,62 @@ def latestmix():
 #Make a mix when called
 def makemix():
 
-    fullsongarr = []
-    starseg = []
+    startseg = [0]
     endseg = []
-    fadeout = [] 
- 
-    nextSong
+    fadeoutarr = [0] 
+  
+    #Get ten songs
+    (songs,songinfoarr) = getsongs("House")
+
+    #Make the segments for the 10 songs
+    for index in range(10):
+        (starttime, endtime, fadeout) = nextSong(songinfoarr[index], songinfoarr[index+1])
+        startseg.add(starttime)
+        endseg.add(endtime)
+        fadeoutarr.add(fadeout)
+
+    makesegments(songs, startseg, endseg, fadeoutarr)
        
     #Create and export the mix
     st = str(datetime.datetime.now())
     mix.export(st+".mp3",format="mp3")
+
+# return a tuple of (songs,songinfo)
+def getsongs(genre, numsongs):
+    
+    if (genre == "House"):
+        path = "./house/"
+    else:
+        path = "./nothouse/"
+
+    songname = []
+    songs = []
+    songinfo = []
+    (songname,song,mixinfo,key,tempo) = getsong(path, None, None, songname)
+    songname.add(songname)
+    songs.add(song)
+    songinfo.add(mixinfo)
+    for index in range(numsongs-1):
+    	(songname,song,mixinfo,key,tempo) = getsong(path, key, tempo, songname)
+	songname.add(songname)
+        songs.add(song)
+        songinfo.add(mixinfo)
+
+    return (songs,songinfo)    
+
+def getsong(path, key, tempo, cursongs):
+    
+    while (True):
+    	randomsong = random.choice(os.listdir(path))
+        file = open(randomsong+".json", 'r')
+        data = json.load(f)
+        songkey = data["key"]
+        songtempo = data["tempo"]
+        songname = data["songname"]
+        if ((key == songkey) && (songtempo = tempo)):
+            if (songname in cursongs):
+              	song = AudioSegment.from_mp3(path)
+		mixinfo = data["mixinfo"]
 
 #Make full segment 
 def makesegments(fullsongarr, startseg, endseg, fadeout):
@@ -65,20 +111,29 @@ def nextSong(s1, s2):
     
     # Bars in build up of song 2
     barLen2 = (d2 - bar2)
-    barsToD2 = (sb - d2) / barLen2
+    barsToD2 = (d2 - sb2) / barLen2
 
-    # Build up time matches break down time (or breakdown is longer)
+    # Build up time matches break down time 
     # Just put the build during break down.
-    if round(barsToEB1) <= round(barsToD2):
-	startTime = sb2
-        endTime = None
+    if round(barsToEB1) == round(barsToD2):
+        startTime2 = sb2
+        endTime1 = eb1
         fadeOut = sb2 - d2
 
+    # Build up time shorter than breakdown
+    # Just put the build during break down.
+    elif round(barsToEB1) > round(barsToD2):
+        startTime2 = sb2
+        breakdownLength = d2 - sb2
+        endTime1 = b1 + breakdownLength
+        fadeOut = sb2 - d2
+        
     # Build up time less than break down time.
     # Just mix in D2 after fixing bars
-    elif barsToEB1 < barsToD2:
-        offset = (d2 - sb2) - (eb1 - b1)
-        startTime = sb2 + offset
-        endTime = None
+    else:
+        extraBuildUp = (d2 - sb2) - (eb1 - b1)
+        startTime2 = sb2 + extraBuildUp
+        endTime1 = eb1
         fadeOut = eb1 - b1
-    return (starTime, endTime, fadeOut)
+    
+    return (starTime2, endTime1, fadeOut)
