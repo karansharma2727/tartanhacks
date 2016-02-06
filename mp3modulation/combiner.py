@@ -8,10 +8,6 @@ import copy
 from subprocess import call
 from pydub import AudioSegment
 
-#Return the newest mix
-#def latestmix():
-#    return max(glob.iglob('*.[Mm][Pp]3'), key=os.path.getctime)
-
 #Make a mix when called
 def makemix():
 
@@ -30,7 +26,7 @@ def makemix():
         fadeoutarr.append(fadeout)
 
     endseg.append(0)
-    mix = makesegments(songlist, startseg, endseg, fadeoutarr)
+    (mix,mixjson) = makesegments(songlist, startseg, endseg, fadeoutarr)
       
     #Create and export the mix
     st = str(datetime.datetime.now())
@@ -39,18 +35,19 @@ def makemix():
 #Make full segment 
 def makesegments(fullsongarr, startseg, endseg, fadeout):
 
-    print (startseg, endseg, fadeout)
-
     songseg = []
     fadeoutarr = []
+    songnames = []
     #Makes the segment of the full songs
-    print fullsongarr
     for index in range(len(fullsongarr)):
         song = AudioSegment.from_mp3(fullsongarr[index][0])
     	seg1 = makeseg(song, startseg[index], endseg[index])
 	songseg.append(seg1)
+        songnamepre = fullsongarr[index][0].split("/",)[-1:]
+        songname = songnamepre[0].split(".")[0]
+        songnames.append(songname)
 
-    return combinemix(songseg, fadeout)
+    return combinemix(songseg, fadeout, songnames)
 
 # Given a full song makes a segment from the song
 def makeseg(fullsong, startseg, endseg):
@@ -64,15 +61,18 @@ def makeseg(fullsong, startseg, endseg):
     return songsecondchop
 
 #Song Array of Segments and fadetimes
-def combinemix(songarr, fadeoutarr):
+def combinemix(songarr, fadeoutarr, songnames):
 
+    jsondic = {}
     #loop through the songs combining them
     newseg = songarr[0]
     for index in range(len(songarr)-1):
-        print fadeoutarr[index+1]
         newseg = newseg.append(songarr[index+1], crossfade=fadeoutarr[index+1])
+        s = len(newseg)/1000
+        m,s = divmod(s,60)
+        jsondic[songnames[index]] = str(m)+":"+str(s)
 
-    return newseg
+    return (newseg,jsondic)
 
 # Know what drop comes next, TODO: Randomize transitions
 def nextTransition(s1, s2):

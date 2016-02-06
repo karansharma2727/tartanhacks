@@ -1,0 +1,187 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html>
+<head>
+  <title> XIM MIX </title>
+  <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon" />
+
+  <link href="./css/bootstrap.css" rel="stylesheet" media="screen">
+
+  <script type="text/javascript" src="./js/libs/jquery-1.12.0.min.js"> </script>
+  <link rel="stylesheet" type="text/css" href="./css/flashblock.css">
+
+  <link rel="stylesheet" type="text/css" href="./css/360player.css">
+  <link rel="stylesheet" type="text/css" href="./css/360player-visualization.css">
+
+  <script type="text/javascript" src="./js/libs/berniecode-animator/berniecode-animator.js"></script>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="./js/jquery.noty.js"></script>
+  <script>
+
+    window.socket = io();
+
+    window.genre = "deep_house";
+    window.genreSelect = function(genre) {
+        $(".type").removeClass("active");
+        $(this).addClass("active");
+        window.genre = genre;
+    }
+
+    socket.on('playRequest', function(data) {
+      console.log("Client received: " + data);
+      window.nextMix = data;
+    });
+    window.socket.emit('playRequest', window.genre);
+
+    function checkForMix() {
+      if(window.nextMix){
+        console.log("Got a Mix");
+        $("#music-link").attr("href", window.nextMix);
+        window.socket.emit('playRequest', window.genre);
+      } else {
+       setTimeout(checkForMix, 0);
+      }
+    };
+    checkForMix();
+
+  </script>
+
+  <script src="./js/libs/soundmanager2/script/soundmanager2.js"></script>
+
+  <script type="text/javascript" src="./js/360player.js"></script>
+
+  <script>
+    console.log("initializing player");
+    soundManager.setup({
+      // path to directory containing SM2 SWF
+      url: './js/libs/soundmanager2/swf/',
+    });
+
+    threeSixtyPlayer.config.scaleFont = (navigator.userAgent.match(/msie/i)?false:true);
+    threeSixtyPlayer.config.showHMSTime = true;
+
+    // enable some spectrum stuffs
+
+    threeSixtyPlayer.config.useWaveformData = true;
+    threeSixtyPlayer.config.useEQData = true;
+
+    // enable this in SM2 as well, as needed
+
+    if (threeSixtyPlayer.config.useWaveformData) {
+      soundManager.flash9Options.useWaveformData = true;
+    }
+    if (threeSixtyPlayer.config.useEQData) {
+      soundManager.flash9Options.useEQData = true;
+    }
+    if (threeSixtyPlayer.config.usePeakData) {
+      soundManager.flash9Options.usePeakData = true;
+    }
+
+    if (threeSixtyPlayer.config.useWaveformData || threeSixtyPlayer.flash9Options.useEQData || threeSixtyPlayer.flash9Options.usePeakData) {
+      // even if HTML5 supports MP3, prefer flash so the visualization features can be used.
+      soundManager.preferFlash = true;
+    }
+
+    // favicon is expensive CPU-wise, but can be enabled.
+    threeSixtyPlayer.config.useFavIcon = false;
+</script>
+
+<style>
+  body {
+  	background-color: #F5F5F5;
+  }
+</style>
+
+<link rel="stylesheet" href="./css/dropzone.css">
+<script type="text/javascript" src="./js/dropzone.js"></script>
+<script>
+$.noty.defaults.killer = true;
+
+Dropzone.options.uploadWidget = {
+  paramName: 'file',
+  maxFiles: 1,
+  dictDefaultMessage: 'Drag an mp3 here to upload, or click to select one',
+  init: function() {
+    this.on('success', function( file, resp ){
+      console.log(file);
+      noty({
+        text: 'File "' + file.name + '" added to current genre!',
+        layout: 'bottom',
+        closeWith: ['click', 'hover'],
+        type: 'success',
+        timeout: 3000,
+        force: true,
+        closeWith: []
+      });
+    });
+  },
+};
+</script>
+
+</head>
+
+<body>
+
+<script src="js/bootstrap.min.js"></script>
+
+<div class ="container">
+
+
+  <div class ="row">
+    <div class="col-sm-2">
+    </div>
+    <div class="col-sm-8">
+       <img class="row text-center" src="image/mixmix.svg" style="width:800px;height:200px;"></img>
+    </div>
+    <div class="col-sm-2">
+    </div>
+  </div>
+
+
+  <div class ="row">
+    <div class="col-sm-4">
+       <img src="image/speaker.gif" style="width:350px;height:500px;"></img>
+    </div>
+
+    <div class="col-sm-4" style="margin-top:50px">
+      <div class="row">
+        <div class="ui360 ui360-vis">
+           <a href="" id="music-link"></a>
+        </div>
+      </div>
+      <div class="row">
+        <form id="upload-widget" method="post" action="/upload" class="dropzone">
+          <div class="fallback">
+            <input name="file" type="file" />
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="col-sm-4">
+       <img src="image/speaker.gif" style="width:350px;height:500px;"></img>
+    </div>
+  </div>
+
+  <div class ="row">
+
+     <div class="btn-group btn-group-justified">
+        <div class="btn-group">
+          <button type="button" class="btn btn-primary type" onclick="window.genreSelect('funk')">Funk</button>
+        </div>
+        <div class="btn-group">
+          <button type="button" class="btn btn-primary type active" onclick="window.genreSelect('deep_house')">Deep House</button>
+        </div>
+        <div class="btn-group">
+          <button type="button" class="btn btn-primary type" onclick="window.genreSelect('prog_house')">Progressive House</button>
+        </div>
+     </div>
+
+  </div>
+
+
+</div>
+
+</body>
+</html>
