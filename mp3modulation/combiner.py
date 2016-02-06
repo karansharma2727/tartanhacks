@@ -51,20 +51,29 @@ def nextSong(s1, s2):
     
     # Bars in build up of song 2
     barLen2 = (d2 - bar2)
-    barsToD2 = (sb - d2) / barLen2
+    barsToD2 = (d2 - sb2) / barLen2
 
-    # Build up time matches break down time (or breakdown is longer)
+    # Build up time matches break down time 
     # Just put the build during break down.
-    if round(barsToEB1) <= round(barsToD2):
+    if round(barsToEB1) == round(barsToD2):
         startTime = sb2
-        endTime = None
+        endTime = eb1
         fadeOut = sb2 - d2
 
+    # Build up time shorter than breakdown
+    # Just put the build during break down.
+    elif round(barsToEB1) > round(barsToD2):
+        startTime = sb2
+        breakdownLength = d2 - sb2
+        endTime = b1 + breakdownLength
+        fadeOut = sb2 - d2
+        
     # Build up time less than break down time.
     # Just mix in D2 after fixing bars
-    elif barsToEB1 < barsToD2:
-        offset = (d2 - sb2) - (eb1 - b1)
-        startTime = sb2 + offset
-        endTime = None
+    else:
+        extraBuildUp = (d2 - sb2) - (eb1 - b1)
+        startTime = sb2 + extraBuildUp
+        endTime = eb1
         fadeOut = eb1 - b1
+
     return (starTime, endTime, fadeOut)
