@@ -17,6 +17,7 @@
   <script src="./js/libs/soundmanager2/script/soundmanager2.js"></script>
 
   <script src="/socket.io/socket.io.js"></script>
+  <script src="./js/jquery.noty.js"></script>
   <script>
 
     window.socket = io();
@@ -76,14 +77,24 @@ body {
 <link rel="stylesheet" href="./css/dropzone.css">
 <script type="text/javascript" src="./js/dropzone.js"></script>
 <script>
+$.noty.defaults.killer = true;
+
 Dropzone.options.uploadWidget = {
   paramName: 'file',
   maxFiles: 1,
   dictDefaultMessage: 'Drag an mp3 here to upload, or click to select one',
   init: function() {
     this.on('success', function( file, resp ){
-      console.log( file );
-      console.log( resp );
+      console.log(file);
+      noty({
+        text: 'File "' + file.name + '" added to current genre!',
+        layout: 'bottom',
+        closeWith: ['click', 'hover'],
+        type: 'success',
+        timeout: 3000,
+        force: true,
+        closeWith: []
+      });
     });
   },
 };
@@ -140,7 +151,7 @@ Dropzone.options.uploadWidget = {
             <input name="file" type="file" />
           </div>
         </form>
-      </div>s
+      </div>
     </div>
 
     <div class="col-sm-4">

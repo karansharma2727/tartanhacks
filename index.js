@@ -15,15 +15,24 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var multer   =  require( 'multer' );
 
 app.use('/', express.static(__dirname + '/clients'));
 app.use('/mp3modulation', express.static(__dirname + '/mp3modulation'));
 
-var fileupload = require('fileupload').createFileUpload(__dirname + '/mp3modulation/music').middleware
+var storage = multer.diskStorage({
+  destination: __dirname + '/mp3modulation/music/',
+  filename: function (req, file, cb) {
+      cb(null, file.originalname)
+  }
+});
 
-app.post('/upload', fileupload, function(req, res) {
-  // files are now in the req.body object along with other form fields
-  // files also get moved to the uploadDir specified
+var upload = multer( { storage: storage,
+                     }
+                   );
+
+app.post('/upload', upload.single( 'file' ), function(req, res, next) {
+  return res.status( 200 ).send( req.file );
 })
 
 
