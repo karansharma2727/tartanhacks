@@ -38,12 +38,17 @@ app.post('/upload', upload.single( 'file' ), function(req, res, next) {
 
 var i = 0;
 var test_songs = ['Lost.mp3', 'Notorious.mp3', 'Tempest.mp3'];
+var mixes = {
+  funk: ['Funk1.mp3','Funk2.mp3','Funk3.mp3'],
+  deep_house: ['Dank1.mp3','Dank2.mp3','Dank3.mp3'],
+  prog_house: ['ProgHouse1.mp3','ProgHouse2.mp3','ProgHouse3.mp3'],
+}
 
 io.on('connection', function(socket){
   console.log('a user connected');
   socket.on('playRequest', function(genre){
-      var title = test_songs[i % test_songs.length];
-      io.emit('playRequest', './mp3modulation/music/deep_house/' + title);
+      var title = mixes[genre][i % mixes[genre].length];
+      io.emit('playRequest', './mp3modulation/' + title);
       console.log("trying to send user " + title);
       i++;
       return;
