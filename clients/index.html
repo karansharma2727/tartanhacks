@@ -19,22 +19,13 @@
   <script src="/socket.io/socket.io.js"></script>
   <script>
 
-    window.socket = io(); //.connect("localhost:3000/");
-/*
-    $('form').submit(function(){
-      socket.emit('chat message', $('#m').val());
-      $('#m').val('');
-      return false;
-    });
-    socket.on('chat message', function(msg){
-      $('#messages').append($('<li>').text(msg));
-    });
+    window.socket = io();
 
     window.nextMix = "./audio/u_got_2.mp3";
-    socket.on('message', function(data) {
+    socket.on('playRequest', function(data) {
       console.log("Client received: " + data);
       window.nextMix = data;
-    });*/
+    });
 
   </script>
 
@@ -121,7 +112,7 @@ body {
 
     <div class="col-sm-4">
           <div class="ui360 ui360-vis">
-	    <a href="./audio/u_got_2.mp3"></a>
+	    <a href="./audio/u_got_2.mp3" id="music-link"></a>
           </div>
     </div>
 
