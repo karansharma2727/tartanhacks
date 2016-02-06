@@ -101,7 +101,7 @@ def getSongs(genre):
 
         if not nextUp:
             print "Outta songs"
-            return res
+            return map(lambda (a,b) : (path + (a[:-5]) + ".mp3", b),res)
         
         # Remove it from the list of possible songs
         jsonMaps.remove(nextUp)
@@ -110,8 +110,8 @@ def getSongs(genre):
         res += [(nextUp[0], nextUp[1]["cues"])]
         last = nextUp
 
-    return res
-    
+    return map(lambda (a,b) : (path + (a[-5:]) + ".mp3", b),res)
+
 def nextSong(bpm, key, jsonMaps):
     bpmRange = [bpm - 5, bpm + 5]
     
@@ -130,4 +130,4 @@ def nextSong(bpm, key, jsonMaps):
     res = random.choice(boundKey)
     return res
 
-getSongs("")
+print getSongs("")
