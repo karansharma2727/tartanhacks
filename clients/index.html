@@ -34,6 +34,7 @@
       if(window.nextMix){
         console.log("Got a Mix");
         $("#music-link").attr("href", window.nextMix);
+        window.socket.emit('playRequest', window.genre);
       } else {
        setTimeout(checkForMix, 0);
       }
