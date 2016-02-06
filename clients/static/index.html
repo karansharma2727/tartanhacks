@@ -54,30 +54,33 @@ if (threeSixtyPlayer.config.useWaveformData || threeSixtyPlayer.flash9Options.us
 // favicon is expensive CPU-wise, but can be enabled.
 threeSixtyPlayer.config.useFavIcon = false;
 </script>
-<style>
-body {
-	background-color: #F5F5F5;
-}
-</style>
-</head>
 
-<body>
-
-<script src="http://limitless-shore-68930.herokuapp.com:3000/socket.io/socket.io.js"></script>
 <script>
-window.socket = io.connect("http://limitless-shore-68930.herokuapp.com:3000/");
 
-socket.on('message', function(data) {
-  console.log("Client received: " + data);
-  window.nextMix = data;
-});
 
 window.nextMix = "./audio/u_got_2.mp3";
 
 </script>
 
+<style>
+body {
+	background-color: #F5F5F5;
+}
+</style>
+
+<script src="http://limitless-shore-68930.herokuapp.com:3000/socket.io/socket.io.js"></script>
+<script>
+  window.socket = io.connect("http://limitless-shore-68930.herokuapp.com:3000/");
+
+  socket.on('message', function(data) {
+    console.log("Client received: " + data);
+    window.nextMix = data;
+  });
+</script>
+
 </head>
 
+<body>
 
 <script src="js/bootstrap.min.js"></script>
 
