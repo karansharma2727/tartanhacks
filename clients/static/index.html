@@ -3,6 +3,9 @@
 <html>
 <head>
   <title> TartanHacks Project </title>
+
+  <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">  
+
   <link rel="stylesheet" type="text/css" href="./css/flashblock.css">
 
   <link rel="stylesheet" type="text/css" href="./css/360player.css">
@@ -49,14 +52,43 @@ if (threeSixtyPlayer.config.useWaveformData || threeSixtyPlayer.flash9Options.us
 threeSixtyPlayer.config.useFavIcon = false;
 
 </script>
+<style>
+body {
+	background-color: 0xF5F5F5;
+}
+</style>
 </head>
 
 <body>
-Hello World!
-<div class="ui360 ui360-vis">
- <a href="./audio/u_got_2.mp3"></a>
-</div>
 
+<script src="js/bootstrap.min.js"></script>
+
+<div class ="container">
+  <div class ="row">
+    <div class="col-sm-2">
+    </div>
+    <div class="col-sm-8">
+       <img class="row text-center" src="image/mixmix.svg" style="width:800px;height:200px;"></img>
+    </div>
+    <div class="col-sm-2">
+    </div>
+  </div>
+  <div class ="row">
+    <div class="col-sm-2">
+    </div>
+    <div class="col-sm-8">
+      <div class = "center-block">
+        <div class = "container">
+          <div class="ui360 ui360-vis">
+	    <a href="./audio/u_got_2.mp3"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-2">
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
