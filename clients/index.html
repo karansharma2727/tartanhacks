@@ -14,63 +14,78 @@
 
   <script type="text/javascript" src="./js/libs/berniecode-animator/berniecode-animator.js"></script>
 
-  <script src="./js/libs/soundmanager2/script/soundmanager2.js"></script>
-
   <script src="/socket.io/socket.io.js"></script>
   <script>
 
     window.socket = io();
 
-    window.nextMix = "./audio/u_got_2.mp3";
+    window.genre = "deep_house";
+    window.genreSelect = function(genre) {
+      window.genre = genre;
+    }
+
     socket.on('playRequest', function(data) {
       console.log("Client received: " + data);
       window.nextMix = data;
     });
+    window.socket.emit('playRequest', window.genre);
+
+    function checkForMix() {
+      if(window.nextMix){
+        console.log("Got a Mix");
+        $("#music-link").attr("href", window.nextMix);
+      } else {
+       setTimeout(checkForMix, 0);
+      }
+    };
+    checkForMix();
 
   </script>
+
+  <script src="./js/libs/soundmanager2/script/soundmanager2.js"></script>
 
   <script type="text/javascript" src="./js/360player.js"></script>
 
   <script>
+    console.log("initializing player");
+    soundManager.setup({
+      // path to directory containing SM2 SWF
+      url: './js/libs/soundmanager2/swf/',
+    });
 
-soundManager.setup({
-  // path to directory containing SM2 SWF
-  url: './js/libs/soundmanager2/swf/',
-});
+    threeSixtyPlayer.config.scaleFont = (navigator.userAgent.match(/msie/i)?false:true);
+    threeSixtyPlayer.config.showHMSTime = true;
 
-threeSixtyPlayer.config.scaleFont = (navigator.userAgent.match(/msie/i)?false:true);
-threeSixtyPlayer.config.showHMSTime = true;
+    // enable some spectrum stuffs
 
-// enable some spectrum stuffs
+    threeSixtyPlayer.config.useWaveformData = true;
+    threeSixtyPlayer.config.useEQData = true;
 
-threeSixtyPlayer.config.useWaveformData = true;
-threeSixtyPlayer.config.useEQData = true;
+    // enable this in SM2 as well, as needed
 
-// enable this in SM2 as well, as needed
+    if (threeSixtyPlayer.config.useWaveformData) {
+      soundManager.flash9Options.useWaveformData = true;
+    }
+    if (threeSixtyPlayer.config.useEQData) {
+      soundManager.flash9Options.useEQData = true;
+    }
+    if (threeSixtyPlayer.config.usePeakData) {
+      soundManager.flash9Options.usePeakData = true;
+    }
 
-if (threeSixtyPlayer.config.useWaveformData) {
-  soundManager.flash9Options.useWaveformData = true;
-}
-if (threeSixtyPlayer.config.useEQData) {
-  soundManager.flash9Options.useEQData = true;
-}
-if (threeSixtyPlayer.config.usePeakData) {
-  soundManager.flash9Options.usePeakData = true;
-}
+    if (threeSixtyPlayer.config.useWaveformData || threeSixtyPlayer.flash9Options.useEQData || threeSixtyPlayer.flash9Options.usePeakData) {
+      // even if HTML5 supports MP3, prefer flash so the visualization features can be used.
+      soundManager.preferFlash = true;
+    }
 
-if (threeSixtyPlayer.config.useWaveformData || threeSixtyPlayer.flash9Options.useEQData || threeSixtyPlayer.flash9Options.usePeakData) {
-  // even if HTML5 supports MP3, prefer flash so the visualization features can be used.
-  soundManager.preferFlash = true;
-}
-
-// favicon is expensive CPU-wise, but can be enabled.
-threeSixtyPlayer.config.useFavIcon = false;
+    // favicon is expensive CPU-wise, but can be enabled.
+    threeSixtyPlayer.config.useFavIcon = false;
 </script>
 
 <style>
-body {
-	background-color: #F5F5F5;
-}
+  body {
+  	background-color: #F5F5F5;
+  }
 </style>
 
 <link rel="stylesheet" href="./css/dropzone.css">
@@ -118,7 +133,7 @@ Dropzone.options.uploadWidget = {
     <div class="col-sm-4">
       <div class="row">
         <div class="ui360 ui360-vis">
-           <a href="./audio/u_got_2.mp3" id="music-link"></a>
+           <a href="" id="music-link"></a>
         </div>
       </div>
       <div class="row">
@@ -127,7 +142,7 @@ Dropzone.options.uploadWidget = {
             <input name="file" type="file" />
           </div>
         </form>
-      </div>s
+      </div>
     </div>
 
     <div class="col-sm-4">
@@ -139,13 +154,13 @@ Dropzone.options.uploadWidget = {
 
      <div class="btn-group btn-group-justified">
         <div class="btn-group">
-          <button type="button" class="btn btn-primary">Funk</button>
+          <button type="button" class="btn btn-primary" onclick="window.genreSelect('funk')">Funk</button>
         </div>
         <div class="btn-group">
-          <button type="button" class="btn btn-primary">Funk</button>
+          <button type="button" class="btn btn-primary" onclick="window.genreSelect('deep_house')">Deep House</button>
         </div>
         <div class="btn-group">
-          <button type="button" class="btn btn-primary">Whit Girl Music</button>
+          <button type="button" class="btn btn-primary" onclick="window.genreSelect('prog_house')">Progressive House</button>
         </div>
      </div>
 
