@@ -1,6 +1,6 @@
 //   npm install socket.io
 //   curl -O https://github.com/LearnBoost/Socket.IO/raw/master/socket.io.min.js
-
+/*
 var http  = require('http'),
     url   = require('url'),
     path  = require('path'),
@@ -35,11 +35,19 @@ server = http.createServer(function(request, response){
     });
 });
 
-server.listen(process.env.BACKEND_PORT || 3000);
+server.listen(3000);
 var listener = io.listen(server);
+var i = 0;
+var test_songs = ['Lost.mp3', 'Notorious.mp3', 'Tempest.mp3'];
 
 listener.on('connection', function(client){
     client.on('playRequest', function(genre) {
+      if(genre === "Karan") {
+        var title = test_songs[i % test_songs.length];
+        client.send('http://limitless-shore-68930.herokuapp.com/mp3modulation/music/deep_house/' + title);
+        i++;
+        return;
+      }
         var child = exec("python ~/combiner.py " + genre,
                          function(error, stdout, stderr){
                              if (error != NULL) {
@@ -59,4 +67,42 @@ listener.on('connection', function(client){
     sh.stderr.on('data', function(data) {
         client.send(data);
     });
+});*/
+
+
+var express = require('express');
+var app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+
+app.use('/', express.static(__dirname + '/clients'));
+/*app.get('/', function(req, res){
+  res.sendFile(__dirname  + '/clients/index.html');
+});*/
+
+io.on('connection', function(socket){
+  console.log('a user connected');
 });
+
+http.listen(3000, function(){
+  console.log('listening on *:3000');
+});
+/*
+socket.on('connection', function(client){
+    client.on('playRequest', function(genre) {
+      if(genre === "Karan") {
+        var title = test_songs[i % test_songs.length];
+        client.send('http://limitless-shore-68930.herokuapp.com/mp3modulation/music/deep_house/' + title);
+        i++;
+        return;
+      }
+        var child = exec("python ~/combiner.py " + genre,
+                         function(error, stdout, stderr){
+                             if (error != NULL) {
+                                 client.send(stdout);
+                             } else {
+                                 client.send("Try again later!");
+                             }
+                         });
+    });
+*/
