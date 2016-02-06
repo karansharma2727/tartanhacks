@@ -3,6 +3,7 @@
 <html>
 <head>
   <title> TartanHacks Project </title>
+  <script type="text/javascript" src="./js/libs/jquery-1.12.0.min.js"> </script>
   <link rel="stylesheet" type="text/css" href="./css/flashblock.css">
 
   <link rel="stylesheet" type="text/css" href="./css/360player.css">
@@ -17,7 +18,7 @@
 
 soundManager.setup({
   // path to directory containing SM2 SWF
-  url: './js/libs/soundmanager2/swf/'
+  url: './js/libs/soundmanager2/swf/',
 });
 
 threeSixtyPlayer.config.scaleFont = (navigator.userAgent.match(/msie/i)?false:true);
@@ -49,12 +50,15 @@ if (threeSixtyPlayer.config.useWaveformData || threeSixtyPlayer.flash9Options.us
 threeSixtyPlayer.config.useFavIcon = false;
 
 </script>
+
+<script src="./js/libs/socket.io/socket.io.js"></script>
+
 </head>
 
 <body>
 Hello World!
 <div class="ui360 ui360-vis">
- <a href="./audio/u_got_2.mp3"></a>
+ <a href="./audio/u_got_2.mp3" id="music-link"></a>
 </div>
 
 
