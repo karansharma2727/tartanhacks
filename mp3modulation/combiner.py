@@ -1,11 +1,9 @@
-import json
 import os
 import random
+import json
+import datetime
 
 from pydub import AudioSegment
-import os
-import random
-import json
 
 #Return the newest mix
 #def latestmix():
@@ -20,7 +18,6 @@ def makemix():
   
     #Get ten songs
     songlist = getSongs("")
-    print songlist
 
     #Make the segments for the 10 songs
     for index in range(len(songlist)-1):
@@ -30,7 +27,7 @@ def makemix():
         fadeoutarr.append(fadeout)
 
     endseg.append(0)
-    makesegments(songlist, startseg, endseg, fadeoutarr)
+    mix = makesegments(songlist, startseg, endseg, fadeoutarr)
       
     #Create and export the mix
     st = str(datetime.datetime.now())
@@ -39,24 +36,24 @@ def makemix():
 #Make full segment 
 def makesegments(fullsongarr, startseg, endseg, fadeout):
 
+    print (startseg, endseg, fadeout)
+
     songseg = []
     fadeoutarr = []
     #Makes the segment of the full songs
     for index in range(len(fullsongarr)):
-        print fullsongarr[index][0]
         song = AudioSegment.from_mp3(fullsongarr[index][0])
     	seg1 = makeseg(song, startseg[index], endseg[index])
-	songseg.add(seg1)
-        fadeoutarr(fadeout[index]-startseg[index])
+	songseg.append(seg1)
 
-    return combinemix(songseg, fadeoutarr)
+    return combinemix(songseg, fadeout)
 
 #Given a full song makes a segment from the song
 def makeseg(fullsong, startseg, endseg):
 
-    songfirstchop = fullsong[:endseg]
     if (endseg == 0):
-        return songfirstchop
+        endseg = len(fullsong);
+    songfirstchop = fullsong[:endseg]
 
     songsecondchop = songfirstchop[(startseg-endseg):]
 
@@ -67,14 +64,14 @@ def combinemix(songarr, fadeoutarr):
 
     #loop through the songs combining them
     newseg = songarr[0]
-    for index in range(len(songarr)):
+    for index in range(len(songarr)-1):
+        print fadeoutarr[index+1]
         newseg = newseg.append(songarr[index+1], crossfade=fadeoutarr[index+1])
 
     return newseg
 
 # Know what drop comes next, TODO: Randomize transitions
 def nextTransition(s1, s2):
-    print s1
     (sb1, bar1, d1, b1, eb1) = tuple(s1)
     (sb2, bar2, d2, b2, eb2) = tuple(s2)
 
@@ -110,7 +107,8 @@ def nextTransition(s1, s2):
         startTime2 = sb2 + extraBuildUp
         endTime1 = eb1
         fadeOut = eb1 - b1
-    
+ 
+   
     return (startTime2, endTime1, fadeOut)
 
 def getSongs(genre):
@@ -132,7 +130,7 @@ def getSongs(genre):
 
         if not nextUp:
             print "Outta songs"
-            return res
+            return map(lambda (a,b) : (path + (a[:-5]) + ".mp3", b),res)
         
         # Remove it from the list of possible songs
         jsonMaps.remove(nextUp)
@@ -141,8 +139,8 @@ def getSongs(genre):
         res += [(nextUp[0], nextUp[1]["cues"])]
         last = nextUp
 
-    return res
-    
+    return map(lambda (a,b) : (path + (a[-5:]) + ".mp3", b),res)
+
 def nextSong(bpm, key, jsonMaps):
     bpmRange = [bpm - 5, bpm + 5]
     
