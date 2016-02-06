@@ -12,7 +12,7 @@ var http  = require('http'),
 
 var connect = require('connect');
 var serveStatic = require('serve-static');
-connect().use(serveStatic(__dirname + '/clients/static/')).listen(8080);
+connect().use(serveStatic(__dirname + '/clients/static/')).listen(process.env.PORT || 80);
 
 server = http.createServer(function(request, response){
     var uri = url.parse(request.url).pathname;
@@ -35,7 +35,7 @@ server = http.createServer(function(request, response){
     });
 });
 
-server.listen(8081);
+server.listen(process.env.BACKEND_PORT || 81);
 var listener = io.listen(server);
 
 listener.on('connection', function(client){
