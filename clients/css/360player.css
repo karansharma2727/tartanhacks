@@ -23,7 +23,7 @@
 
 .sm2-360ui {
  /* slight inner shadow + BG color + border */
- background-image: url("../image/basslogo.jpg");
+ /* background-image: url("../image/basslogo.jpg"); */
  background-size: 256px 258px;
  background-color: #f9f9f9;
  background-color: rgba(0,0,0,0.025);
